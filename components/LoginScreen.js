@@ -5,7 +5,7 @@ import { RadioButton } from 'react-native-paper';
 //Import components
 import SafeContainer from './safeContainer/SafeContainer'
 
-export default function LoginScreen() {
+export default function LoginScreen({navigation}) {
 
     const [checked, setChecked] = React.useState('student')
 
@@ -55,7 +55,10 @@ export default function LoginScreen() {
                     />
                 </View>
                 <View style={styles.formGroup}>
-                    <TouchableOpacity style={styles.formButton}>
+                    <TouchableOpacity 
+                        style={styles.formButton}
+                        onPress={() => navigation.navigate('Dashboard')}
+                    >
                         <Text style={styles.formButtonText}>Login</Text>
                     </TouchableOpacity>
                 </View>
