@@ -1,25 +1,16 @@
 import React from 'react'
-import { View, SafeAreaView, Text, StyleSheet, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import { DataTable } from 'react-native-paper';
 
 import MenuBar from './MenuBar'
 
-export default function DashboardScreen({navigation}) {
+export default function ViewAppoinmtments({navigation}) {
     return (
-
         <View>
             <MenuBar open={() =>{navigation.openDrawer()}}/>
-            <View style={styles.container}>
-                <Text style={styles.heading}>Next Appointment in</Text>
-                <View>
-                    <Text>20 Days : 10 Hours : 55 Months : 23 Seconds</Text>
-                </View>
-
-                <View style={styles.appointments}>
-                    <Text style={styles.appointmentsHeader}>Appointments</Text>
-                    <ScrollView style={styles.scroll} horizontal={true}>
+            <ScrollView style={styles.scroll} horizontal={true}>
                     <DataTable style={styles.table}>
-                        <DataTable.Header>
+                        <DataTable.Header style={styles.table}>
                         <DataTable.Title>Subject</DataTable.Title>
                         <DataTable.Title >Date</DataTable.Title>
                         <DataTable.Title >Time</DataTable.Title>
@@ -30,7 +21,7 @@ export default function DashboardScreen({navigation}) {
                         <DataTable.Title >Comment</DataTable.Title>
                         </DataTable.Header>
 
-                        <DataTable.Row>
+                        <DataTable.Row style={styles.table}>
                         <DataTable.Cell>dfgd</DataTable.Cell>
                         <DataTable.Cell >159</DataTable.Cell>
                         <DataTable.Cell >6.0</DataTable.Cell>
@@ -41,7 +32,7 @@ export default function DashboardScreen({navigation}) {
                         <DataTable.Cell >6.0</DataTable.Cell>
                         </DataTable.Row>
 
-                        <DataTable.Row>
+                        <DataTable.Row style={styles.center}>
                         <DataTable.Cell>sdssd</DataTable.Cell>
                         <DataTable.Cell >237</DataTable.Cell>
                         <DataTable.Cell >8.0</DataTable.Cell>
@@ -55,35 +46,25 @@ export default function DashboardScreen({navigation}) {
                         
                     </DataTable>
                     </ScrollView>
-                </View>
-            </View>
         </View>
-
     )
 }
 const styles = StyleSheet.create({
-
     container: {
-        paddingTop: 20,
-        paddingLeft: 20,
-        paddingRight: 20,
-        alignItems: "center"
-    },
-    heading: {
-        fontSize: 22
+        flex: 1,
+        paddingTop: 50,
+        height: "100%"
     },
     scroll: {
-        width: "100%"
+        marginTop: 50,
     },
-    appointments: {
-        marginTop: 100,
-        width: "100%",
-    },
-    appointmentsHeader: {
-        fontSize: 20,
-        color: "#707070",
+    rowWidth: {
+        width: 50
     },
     table: {
-        width: 600
+        width: 500
+    },
+    center: {
+        textAlign: "center"
     }
 })
