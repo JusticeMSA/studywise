@@ -101,7 +101,14 @@ export default function AddAppointment({navigation}) {
               subject: subject,
               time: time
           }
-          const res =  await firebase.firestore().collection('appointments').doc(`${id}`).set(data);
+          try{
+            const res =  await firebase.firestore().collection('appointments').doc(`${id}`).set(data);
+            alert('Appointment request sent'),
+            navigation.navigate('Dashboard')
+          }catch(e){
+              alert('Something went wrong!!')
+          }
+
          
     }
 
@@ -130,6 +137,7 @@ export default function AddAppointment({navigation}) {
                     {
                         subs.map((sub, index) => {
                            return <Pick.Item label={sub} value={sub} />
+                           
                         })
                     }
                     </Pick>
