@@ -1,48 +1,66 @@
 import * as React from 'react';
-import { SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { RadioButton } from 'react-native-paper';
+import { SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
+import {firebase} from '../firebaseConfig'
+import { Context } from "../context";
 
-//Import components
-import SafeContainer from './safeContainer/SafeContainer'
+
+
 
 export default function LoginScreen({navigation}) {
 
-    const [checked, setChecked] = React.useState('student')
+    const [context, setContext] = React.useContext(Context);
+    const [username, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [example, setExample] = React.useState();
+
+    const checkTextInput = () => {
+        //Check for the Name TextInput
+        if (!username.trim()) {
+          alert('Please Enter Name');
+          return;
+        }
+        //Check for the Email TextInput
+        if (!password.trim()) {
+          alert('Please Enter Email');
+          return;
+        }
+        
+        login(username, password)
+      };
+
+      const login = async (username, password) =>{
+
+        const usersRef = await firebase.firestore().collection('users').doc(`${username}`).get()
+        const snapshot = await usersRef.data();
+        
+        if (snapshot.password !== password) {
+            alert('Incorrect username or password');
+            return;
+          }else{
+              
+            setContext(snapshot)
+            navigation.navigate('Dashboard', {user: snapshot})
+
+            
+          }
+
+      }
+
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.form}>
                 <Text style={styles.heading}>Login</Text>
 
-                <View style={styles.formGroup, styles.radio}>
-                <Text style={styles.formLabel}>Student</Text>
-                <RadioButton
-                    value="student"
-                    status={ checked === 'student' ? 'checked' : 'unchecked' }
-                    onPress={() => setChecked('student')}
-                    color="#0d58d1"
-                />
-                <Text style={styles.formLabel}>Lecturer</Text>
-                <RadioButton
-                    value="lecturer"
-                    status={ checked === 'lecturer' ? 'checked' : 'unchecked' }
-                    onPress={() => setChecked('lecturer')}
-                    color="#0d58d1"
-                />
-                <Text style={styles.formLabel}>Mentor</Text>
-                <RadioButton
-                    value="lecturer"
-                    status={ checked === 'mentor' ? 'checked' : 'unchecked' }
-                    onPress={() => setChecked('mentor')}
-                    color="#0d58d1"
-                />
-                </View>
                 <View style={styles.formGroup}>
                     <Text style={styles.formLabel}>Username</Text>
                     <TextInput 
                         style={styles.formInput}
                         textContentType="username"
                         placeholder="Username"
+                        onChangeText={
+                            (value) => setUsername(value)
+                          }
                     />
                 </View>
                 <View style={styles.formGroup}>
@@ -52,12 +70,15 @@ export default function LoginScreen({navigation}) {
                         textContentType="password"
                         placeholder="Password"
                         secureTextEntry={true}
+                        onChangeText={
+                            (value) => setPassword(value)
+                          }
                     />
                 </View>
                 <View style={styles.formGroup}>
                     <TouchableOpacity 
                         style={styles.formButton}
-                        onPress={() => navigation.navigate('Dashboard')}
+                        onPress={checkTextInput}
                     >
                         <Text style={styles.formButtonText}>Login</Text>
                     </TouchableOpacity>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 
-export default function MenuBar({open}) {
+export default function MenuBar({open, navigation}) {
     return (
         <View style={styles.bar}>
             <TouchableOpacity
@@ -14,7 +14,10 @@ export default function MenuBar({open}) {
             </TouchableOpacity>
             <Text style={styles.logo}>STUDYWISE</Text>
             <View>
-            <TouchableOpacity style={styles.profile}>   
+            <TouchableOpacity 
+                style={styles.profile}
+                onPress={() => {navigation.navigate('Profile')}}
+            >   
             </TouchableOpacity>            
 
             </View>
