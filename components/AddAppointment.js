@@ -96,7 +96,8 @@ export default function AddAppointment({navigation}) {
               app_status: "Not Confirmed",
               app_type: selectedType,
               lab_name: "",
-              lem: {name: "Lambani DV", id: "54321"},
+              teacher: "Lambani DV",
+              teacher_id: "54321",
               student: context.user_id,
               subject: subject,
               time: time

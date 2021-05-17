@@ -2,6 +2,7 @@ import * as React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
 import {firebase} from '../firebaseConfig'
 import { Context } from "../context";
+import { NavigationContainer } from '@react-navigation/native';
 
 
 
@@ -83,6 +84,13 @@ export default function LoginScreen({navigation}) {
                         <Text style={styles.formButtonText}>Login</Text>
                     </TouchableOpacity>
                 </View>
+                <TouchableOpacity
+                onPress={() =>{
+                    navigation.navigate('Register')
+                }}
+                >
+                    <Text style={{color: "blue"}}>Register a new account</Text>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     )

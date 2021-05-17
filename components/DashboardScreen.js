@@ -1,9 +1,11 @@
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import React, {useContext, useState, useEffect, useLayoutEffect} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import { View, SafeAreaView, Text, StyleSheet, ScrollView, Button, TouchableOpacity } from 'react-native'
 import { DataTable } from 'react-native-paper';
+import { color } from 'react-native-reanimated';
 import { Context } from "../context";
 import {firebase} from '../firebaseConfig'
+import CountDown from 'react-native-countdown-component';
 
 import MenuBar from './MenuBar'
 
@@ -11,6 +13,7 @@ export default function DashboardScreen({navigation}) {
 
     const [context, setContext] = useContext(Context);
     const[apps, setApps] = useState([])
+    const[appsNum, setAppsNum] = useState([])
 
     useEffect(() =>{
         get()
@@ -18,16 +21,32 @@ export default function DashboardScreen({navigation}) {
 
     async function get(){
 
+        if(context.role !== "student"){
+            return
+        }
+
         const arr = [];
+        const count = [];
 
         const appRef = await firebase.firestore().collection('appointments')
-        const snapshot = await appRef.where('student', '==', `${context.user_id}`).get()
+        const snapshot = await appRef.where('student', '==', `${context.user_id}`).orderBy('app_date').orderBy('time').get()
 
-        if (snapshot.empty) {
-            alert("You do not have any appointments")
-            return;
-          }
+        const appNum = await firebase.firestore().collection('appointments')
+        const appNumSnap = await appNum.where('teacher_id', '==', `${context.user_id}`).get()
         
+        if (snapshot.empty) {
+            // alert("You do not have any appointments")
+            return;
+        }
+        
+        appNumSnap.forEach(doc => {
+            
+            count.push(
+                doc.data())
+                
+            });
+            console.log(count)
+            setAppsNum(count.length)
           snapshot.forEach(doc => {
         
             arr.push(
@@ -37,7 +56,8 @@ export default function DashboardScreen({navigation}) {
                     status: doc.data().app_status, 
                     type: doc.data().app_type, 
                     venue: doc.data().lab_name, 
-                    lem: doc.data().lem, 
+                    teacher: doc.data().teacher, 
+                    teacher_id: doc.data().teacher_id, 
                     comment: doc.data().app_comment})
                     
                 });
@@ -57,26 +77,19 @@ export default function DashboardScreen({navigation}) {
                 <View style={styles.container}>
                 <Text style={styles.heading}>Next Appointment in</Text>
                 <View style={styles.arow}>
-                    <View style={styles.box}>
-                        <Text style={styles.one}>22</Text>
-                        <Text style={styles.two}>days</Text>
-                    </View>
-                    <View style={styles.box}>
-                        <Text style={styles.one}>14</Text>
-                        <Text style={styles.two}>hours</Text>
-                    </View>
-                    <View style={styles.box}>
-                        <Text style={styles.one}>3</Text>
-                        <Text style={styles.two}>minutes</Text>
-                    </View>
-                    <View style={styles.box}>
-                        <Text style={styles.one}>21</Text>
-                        <Text style={styles.two}>seconds</Text>
-                    </View>
+                <CountDown
+                    until={163865520000}
+                    onFinish={() => alert('finished')}
+                    onPress={() => alert('hello')}
+                    size={20}
+                />
 
                 </View>
 
-                <View style={styles.appointments}>
+                {
+                    context.role == "student" ?
+                    (
+                        <View style={styles.appointments}>
                     <Text style={styles.appointmentsHeader}>Appointments</Text>
                     <ScrollView style={styles.scroll} horizontal={true}>
                     <DataTable style={styles.table}>
@@ -99,7 +112,7 @@ export default function DashboardScreen({navigation}) {
                             <DataTable.Cell style={{justifyContent: "center"}}>{i.status}</DataTable.Cell>
                             <DataTable.Cell style={{justifyContent: "center"}}>{i.type}</DataTable.Cell>
                             <DataTable.Cell style={{justifyContent: "center"}}>{i.venue}</DataTable.Cell>
-                            <DataTable.Cell style={{justifyContent: "center"}}>{i.lem.name}</DataTable.Cell>
+                            <DataTable.Cell style={{justifyContent: "center"}}>{i.teacher}</DataTable.Cell>
                             <DataTable.Cell style={{justifyContent: "center"}}>{i.comment}</DataTable.Cell>
                             </DataTable.Row>)
                             })
@@ -119,6 +132,34 @@ export default function DashboardScreen({navigation}) {
                     </DataTable>
                     </ScrollView>
                 </View>
+                    )
+                    : 
+                    (
+                        <View style={styles.container}>
+                        <View style={styles.brow}>
+                            <View style={styles.boxer}>
+                                <Text style={styles.btext1}>TOTAL APPOINTMENTS MADE</Text>
+                                <Text style={styles.num}>4</Text>
+                            </View>
+                            <View style={styles.boxer}>
+                                <Text style={styles.btext2}>NUMBER OF LECTURERS</Text>
+                                <Text style={styles.num}>1</Text>
+                            </View>
+                        </View>
+                        <View style={styles.brow}>
+                            <View style={styles.boxer}>
+                                <Text style={styles.btext3}>NUMBER OF MENTORS</Text>
+                                <Text style={styles.num}>1</Text>
+                            </View>
+                            <View style={styles.boxer}>
+                                <Text style={styles.btext4}>NUMBER OF STUDENTS</Text>
+                                <Text style={styles.num}>1</Text>
+                            </View>
+                        </View>
+                        </View>
+                    )
+                }
+                
                 </View>
             </ScrollView>
                 <TouchableOpacity
@@ -139,6 +180,7 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         justifyContent: "center",
         alignItems: "center",
+        width: "100%",
     },
     heading: {
         fontSize: 25,
@@ -187,5 +229,48 @@ const styles = StyleSheet.create({
     },
     two: {
         fontSize: 10,
-    }
+    }, 
+    brow :{
+        flex: 1,
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 20,
+    },
+    boxer: {
+        width: 150,
+        height: 150,
+        backgroundColor: "#fff",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+
+        elevation: 3,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    num: {
+        color: "#5a5c69",
+        fontSize: 28,
+    },
+    btext1: {
+        fontSize: 9,
+         color: "#4e73df"
+    },
+    btext2: {
+        fontSize: 9,
+         color: "#1cc88a"
+    },
+    btext3: {
+        fontSize: 9,
+         color: "#36b9cc"
+    },
+    btext4: {
+        fontSize: 9,
+         color: "#f6c23e"
+    },
 })

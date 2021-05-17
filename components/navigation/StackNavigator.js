@@ -7,6 +7,7 @@ import HomeScreen from '../HomeScreen';
 import LoginScreen from '../LoginScreen';
 import DashboardScreen from '../DashboardScreen';
 import DrawerNavigator from '../navigation/DrawerNavigator'
+import RegisterScreen from '../RegisterScreen';
 
 
 //Create stack
@@ -21,6 +22,7 @@ export default function StackNavigator() {
         >
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Dashboard" component={DrawerNavigator} />
         </Stack.Navigator>
     )

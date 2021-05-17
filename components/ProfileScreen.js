@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import { View, Text, StyleSheet, Image, Button, ScrollView,TextInput, TouchableOpacity } from 'react-native'
 import MenuBar from './MenuBar'
 import {Context} from '../context'
@@ -17,7 +17,40 @@ export default function ProfileScreen({navigation}) {
     const [email, setEmail] = useState(context.email);
     const [phone, setPhone] = useState(context.phone);
     
+    useEffect(() => {
+        get()
+    }, [])
 
+    async function get(){
+
+        const arr = [];
+
+        const appRef = await firebase.firestore().collection('appointments')
+        const snapshot = await appRef.where('teacher_id', '==', `${context.user_id}`).get()
+
+
+
+        if (snapshot.empty) {
+            alert(context.user_id)
+            return;
+          }
+        
+          snapshot.forEach(doc => {
+        
+            arr.push(
+                {   date: doc.data().date, 
+                    from: doc.data().from, 
+                    id: doc.data().id, 
+                    teacher: doc.data().teacher, 
+                    message: doc.data().message, 
+                    read: doc.data().read, 
+                    subject: doc.data().subject})
+                    
+                });
+
+        // setNotifications(arr)
+        console.log(arr)
+    }
 
     const checkTextInput = () => {
 
